@@ -1,0 +1,41 @@
+
+Reset margin and padding for body and html
+html, body {
+  background-image: url('/home/anupama-suresh/HRMS/react_hrms/public/bg.jpg');
+  background-size: cover; 
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.home-container {
+  background-position: center; 
+  background-repeat: no-repeat; 
+  height: fit-content;  
+  width: fit-content;   
+  /* display: flex; */
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+/* button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #0056
+}; */
