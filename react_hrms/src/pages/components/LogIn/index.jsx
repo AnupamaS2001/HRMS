@@ -93,12 +93,12 @@ const Login = () => {
   };
 
   return (
-    <Container maxWidth="xs">
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 8 }}>
+    <Container>
+      <Box  sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' , mt : 40 }}>
         <Typography component="h1" variant="h5">
           Login
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+        <Box component="form" onSubmit={handleSubmit} >
           <TextField
             margin="normal"
             required

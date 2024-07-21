@@ -39,7 +39,7 @@ export const getDetailEmployee=(id)=>{
 
 
 export const putEmployee = async (employeeData, successCb, errorCb) => {
-    const url = '/employee/update/<int:id>' // No need to prepend `Url` here as it is already set in the instance
+    const url = `/employee/update/${employeeData.id}` // No need to prepend `Url` here as it is already set in the instance
 
     return instance.put(url, employeeData)
         .then((response) => {

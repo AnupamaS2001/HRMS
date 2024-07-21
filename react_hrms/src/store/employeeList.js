@@ -15,6 +15,7 @@ export const getEmployeeDetail = createAsyncThunk(
   'employee/getEmployeeDetail',
   async (id) => {
     const response = await axios.get(`${import.meta.env.VITE_URL}/employee/${id}`);
+    console.log(response.data);
     return response.data;
   }
 );
@@ -66,7 +67,7 @@ const employeeSlice = createSlice({
   name: 'employee',
   initialState: {
     employees: [],  
-    employee_detail: {},  
+    employeeDetail: {},  
     status: 'idle',
     error: null,
   },
@@ -88,7 +89,7 @@ const employeeSlice = createSlice({
       })
       .addCase(getEmployeeDetail.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.employee_detail = action.payload;
+        state.employeeDetail = action.payload;
       })
       .addCase(getEmployeeDetail.rejected, (state, action) => {
         state.status = 'failed';
@@ -99,7 +100,7 @@ const employeeSlice = createSlice({
       })
       .addCase(updateEmployee.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.employee_detail = action.payload;
+        state.employeeDetail = action.payload;
       })
       .addCase(updateEmployee.rejected, (state, action) => {
         state.status = 'failed';

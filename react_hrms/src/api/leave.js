@@ -9,7 +9,7 @@ const instance = axios.create({
 export const addEmployeeLeave = async (employee_id) => {
     try {
       const response = await instance.post(`/leave/add/${employee_id}`);
-      console.log(response.data.message);
+      // console.log(response.data, 'response');
      
       return response.data;
     } catch (error) {

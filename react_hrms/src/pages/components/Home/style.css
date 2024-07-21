@@ -1,7 +1,6 @@
 
 Reset margin and padding for body and html
 html, body {
-  background-image: url('/home/anupama-suresh/HRMS/react_hrms/public/bg.jpg');
   background-size: cover; 
   margin: 0;
   padding: 0;
@@ -13,16 +12,17 @@ html, body {
   align-items: center;
 }
 
-.home-container {
+/* .home-container {
+  background-image: url('/home/anupama-suresh/HRMS/react_hrms/public/bg.jpg');
   background-position: center; 
   background-repeat: no-repeat; 
   height: fit-content;  
   width: fit-content;   
-  /* display: flex; */
+  display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-}
+} */
 
 /* button {
   margin: 10px;
