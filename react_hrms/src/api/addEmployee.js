@@ -7,7 +7,7 @@ const instance = axios.create({
 });
 
 export const postEmployee = async (employeeData, successCb, errorCb) => {
-    const url = '/employee/add'; // No need to prepend `Url` here as it is already set in the instance
+    const url = '/employee/add'; 
 
     return instance.post(url, employeeData)
         .then((response) => {

@@ -1,7 +1,6 @@
 
 import {BrowserRouter as Router , Routes, Route} from 'react-router-dom';
 import './App.css'
-// import Vcf from './pages/Vcf';
 
 import Home from './pages/components/Home';
 import LogIn from './pages/components/LogIn';
@@ -12,8 +11,6 @@ import LogOut from './pages/components/LogOut';
 import DesignationAdd from './pages/components/DesignationList/designationAdd';
 import DesignationList from './pages/components/DesignationList';
 import DesignationUpdate from './pages/components/DesignationList/designationUpdate';
-// import UpdateEmployeeDetail from './pages/components/UpdateEmployee';
-// import EmployeeUpdate from './pages/components/UpdateEmployee';
 function App() {
 
   return (
@@ -28,8 +25,6 @@ function App() {
           <Route path='/designation/all' element={<DesignationList/>}/>
           <Route path='/designation/update/:id' element={<DesignationUpdate/>}/>
           <Route path='/logout' element={<LogOut/>}/>
-          {/* <Route path='/employee/update/:id' element={<EmployeeUpdate/>}/> */}
-          {/* <Route path='/employee/update/:id' element={<UpdateEmployeeDetail/>}/> */}
 
         </Routes>
       </Router>

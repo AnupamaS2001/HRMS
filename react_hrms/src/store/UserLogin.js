@@ -1,26 +1,3 @@
-// import createAsyncThunk from "@reduxjs/toolkit";
-// import { login } from "../api/login";
-
-// const intialState = {
-//     status:"pending",
-//     user: null
-// };
-
-// export const UserLogin = createAsyncThunk("login",
-//     async({LoginUser,successCb,errorCb}, {rejectWithValue}) => {
-//         return login(LoginUser)
-//         .then((response) => {
-//             if (successCb) successCb(response);
-//             return response;
-//         }).catch((error) => {
-//             if (errorCb) errorCb(error);
-//             return rejectWithValue(error.response?.data?.message || error.message
-//             );
-//         });
-//     }
-//  )
-
-// const 
 
 
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";

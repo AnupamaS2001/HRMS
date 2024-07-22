@@ -110,15 +110,11 @@ const DesignationAdd = () => {
     });
   };
 
-  // const handleOpen = () => setModalOpen(true);
   const handleClose = () => setModalOpen(false);
 
 
   return (
     <Box>
-      {/* <Button variant="contained" color="primary" onClick={handleOpen}>
-        Add Designation
-      </Button> */}
       <Modal
         open={modalOpen}
         onClose={handleClose}

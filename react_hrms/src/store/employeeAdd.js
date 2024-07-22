@@ -14,7 +14,7 @@ export const addEmployee = createAsyncThunk(
     return postEmployee(employeeData)
       .then(response => {
         if (successCb) successCb(response);
-        return response;
+        return response.data;
       })
       .catch(error => {
         if (errorCb) errorCb(error);
@@ -34,7 +34,7 @@ const addEmployeeSlice = createSlice({
       })
       .addCase(addEmployee.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.employee.push(action.payload);
+        state.employee= action.payload;
       })
       .addCase(addEmployee.rejected, (state, action) => {
         state.status = "failed";

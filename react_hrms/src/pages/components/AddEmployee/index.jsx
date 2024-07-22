@@ -1,6 +1,6 @@
 
 import { useState ,useEffect} from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {  useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -8,8 +8,8 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { addEmployee } from '../../../store/employeeAdd';
-import { getDesignation } from '../../../api/designation';
 import { MenuItem, Select ,FormControl} from '@mui/material';
+import { getDesignationList } from '../../../store/designation';
 
 
 const EmployeeAdd = () => {
@@ -26,21 +26,13 @@ const EmployeeAdd = () => {
     
   });
   const [open, setOpen] = useState(true); // State for modal
-  const [designations, setDesignations] = useState([]);  // State to store designations
+  const designations = useSelector((state) => state.designation.designation.data ?? []);
 
   useEffect(() => {
-    const getDesignations = async () => {
-      try {
-        const designationsData = await getDesignation();
-        setDesignations(designationsData.data);
-        console.log(designationsData,"gfjhbkufdutrfdkuhg");
-      } catch (error) {
-        console.error('Error fetching designations:', error);
-      }
-    };
-
-    getDesignations();
-  }, []);
+ 
+    dispatch(getDesignationList());
+    
+  },[dispatch]);
 
   const handleClose = () => setOpen(false);
   const handleCancel = () => {
@@ -147,20 +139,6 @@ const EmployeeAdd = () => {
               style={{ marginBottom: '1rem' }}
             />
        
-            {/* <TextField
-              id="designation"
-              name="designation"
-              label="Designation Name"
-              variant="outlined"
-              value={employee.designation}
-              onChange={handleInputChange}
-              fullWidth
-              style={{ marginBottom: '1rem' }}
-            /> */}
-
-          
-
-
             <Select
               id="designation"
               name="designation_id"

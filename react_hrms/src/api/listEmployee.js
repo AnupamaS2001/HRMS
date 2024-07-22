@@ -26,16 +26,6 @@ export const getDetailEmployee=(id)=>{
     });
 }
 
-// export const putEmployee=(id)=>{
-//     return instance.put (`/employee/update/${id}`)
-//     .then(res =>{
-//         return res.data;
-//     })
-//     .catch(error =>{console.error('Error....',error);
-//         throw error;
-//     });
-// };
-
 
 
 export const putEmployee = async (employeeData, successCb, errorCb) => {

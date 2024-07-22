@@ -9,20 +9,7 @@ const intialState = {
   };
   
 
-// export const addLeave = createAsyncThunk(
-//     'leave/add',
-//     async (employee_id) => {
-//         console.log( "entereddddddddddddddddddddd");
-//       return addEmployeeLeave(employee_id)
-//         .then((response) => {
-//           console.log(response.data, "response_________________");
-//           return response.data;
-//         })
-//         .catch((error) => {
-//           throw error;
-//         });
-//     }
-//   )
+
 
   export const addLeave = createAsyncThunk(
     'leave/add',

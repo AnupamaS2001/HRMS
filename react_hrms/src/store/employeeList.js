@@ -16,17 +16,11 @@ export const getEmployeeDetail = createAsyncThunk(
   async (id) => {
     const response = await axios.get(`${import.meta.env.VITE_URL}/employee/${id}`);
     console.log(response.data);
-    return response.data;
+    return response.data.data;
   }
 );
 
-// export const updateEmployee = createAsyncThunk(
-//   'employee/updateEmployee',
-//   async (id) => {
-//     const response = await axios.put(`${import.meta.env.VITE_URL}/employee/update/${id}`);
-//     return response.data;
-//   }
-// );
+
 
 
 
@@ -44,22 +38,6 @@ export const updateEmployee = createAsyncThunk(
       });
   }
 );
-
-
-
-
-
-
-// export const addEmployeeLeave = createAsyncThunk(
-//   'employee/addEmployeeLeave',
-//   async (id) => {
-//     console.log('fdddddddddd');
-//     const response = await axios.post(`${import.meta.env.VITE_URL}/leave/add/${id}`);
-//     // const response = await axios.post(`${import.meta.env.VITE_URL}/leave/add/${id}`);
-//     console.log(response.data);
-//     return response.data;
-//   }
-// );
 
 
 

@@ -18,7 +18,6 @@ import {
   TableHead,
   TableRow,
   Grid,
-  Card
 } from "@mui/material";
 import Navbar from "./navbar";
 import EmployeeDetail from "./EmployeeDetail";
