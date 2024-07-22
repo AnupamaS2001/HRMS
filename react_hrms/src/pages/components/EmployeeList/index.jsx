@@ -18,6 +18,7 @@ import {
   TableHead,
   TableRow,
   Grid,
+  Card
 } from "@mui/material";
 import Navbar from "./navbar";
 import EmployeeDetail from "./EmployeeDetail";
@@ -114,11 +115,7 @@ const Company = () => {
             </Grid>
             <Grid item xs={6}>
 <Box>
-  {selectedEmployee.id ? (
-    <EmployeeDetail employee={selectedEmployee} />
-  ) : (
-    <Typography>Select an employee to view details</Typography>
-  )}
+    {selectedEmployee.id && <EmployeeDetail employee={selectedEmployee} />}
 </Box>
             </Grid>
           </Box>

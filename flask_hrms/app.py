@@ -1,40 +1,63 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify,session
 from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
+from flask_cors import CORS,cross_origin
 from models import *
 import flask 
+import datetime as dt
+from flask_bcrypt import Bcrypt 
+
 
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://anu:1234@localhost:5432/flaskdb"
 
 db.init_app(app)
 CORS(app)
 
-
+app.secret_key = 'anupama123'
 @app.route("/")
 def home():
     return "Hello, world"
 
-
-
-#login
-@app.route('/login', methods=['POST'])
-def login():
+#register
+@app.route('/register', methods=['POST'])
+@cross_origin()
+def register():
     if request.method == 'POST':
         username = request.json.get('username')
         password = request.json.get('password')
-        print(username, password ,"username")
-        user = db.session.query(Credential).filter_by(username=username, password=password).first()
-        print(user)
-        if user:
-            return jsonify({'status': 'success'})
-        else:
-            return jsonify({'status': 'error'}), 401  
+        if not username or not password:
+            return jsonify({'status': 'error'}), 400
+        hashed_password = bcrypt.generate_password_hash (password).decode('utf-8') 
+        user = Credential(username=username, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        return jsonify({'status': 'success'})
+    
+
+#login
+@app.route('/login', methods=['POST'])
+@cross_origin()
+def login():
+    username = request.json.get('username')
+    password = request.json.get('password')
+    if not username or not password:
+        return jsonify({'status': 'fill fields'}), 400
+    user = db.session.query(Credential).filter_by(username=username).first()
+    if user==None:
+            return jsonify({'status': 'username error'})
+    isvalid = bcrypt.check_password_hash(user.password, password)
+           
+    if isvalid:
+            session['username'] = username  
+            return jsonify({'status': 'success'}),200
+
+    return jsonify({'status': 'password error'}),400
         
 #get designtion
 @app.route('/designation/all', methods=['GET'])
+@cross_origin()
 def get_all_designations():
-    if request.method == 'GET':
         designations = db.session.query(Designation).all()
         designation_list = []
         for designation in designations:
@@ -44,45 +67,48 @@ def get_all_designations():
                 'leave_allotted': designation.leave_allotted
             }
             designation_list.append(designation_data)
-        return jsonify(designation_list)
+        return jsonify({'status': 'success', 'data': designation_list})
     
 # post designation
 @app.route('/designation/add', methods=['POST'])
 def add_designation():
-    if request.method == 'POST':
         name = request.json.get('name')
         leave_allotted = request.json.get('leave_allotted')
+        if not name or not leave_allotted:
+            return jsonify({'status': 'fill fields'}), 400
         designation = Designation(name=name, leave_allotted=leave_allotted)
+
         db.session.add(designation)
         db.session.commit()
-        return jsonify({'status': 'success'})
-    else:
-        return jsonify({'status': 'error'}), 400  
+        return jsonify({'status': 'designation added success'})
     
 # update designation
 @app.route('/designation/update/<int:id>', methods=['PUT']) 
+@cross_origin()
 def update_designation(id):
-    if request.method == 'PUT':
-        name = request.json.get('name')
-        leave_allotted = request.json.get('leave_allotted')
+        data = request.get_json()        
+        name = data.get('name')
+        leave_allotted = data.get('leave_allotted')
+        if not name or not leave_allotted:  
+            return jsonify({'status': 'fill fields'}), 400
         designation = db.session.query(Designation).filter_by(id=id).first()
         if designation:
             designation.name = name
             designation.leave_allotted = leave_allotted
             db.session.commit()
-            return jsonify({'status': 'success'})
+            return jsonify({'status': 'designation updated success'})
         else:
             return jsonify({'status': 'error'}), 404  
     
 # list employee
 @app.route('/employee/all', methods=['GET'])
+@cross_origin()
 def get_all_employees():
-    if request.method == 'GET':
-        employees = Employee.query.all()
+        deleted_employees = Employee.query.filter_by(deleted_at=None).all()
 
         emp_data = []
 
-        for employee in employees:
+        for employee in deleted_employees:
             leave_taken = Leave.query.filter_by(employee_id=employee.id).count() 
             emp_data.append({
             'id': employee.id,
@@ -97,36 +123,50 @@ def get_all_employees():
             'leave_taken': leave_taken,
             'leave_allotted': employee.designation.leave_allotted
             })
-    
-        
-        return jsonify({"data": emp_data})
+        return jsonify({"status": "success","data": emp_data}),200
 
 
 # get one employee
 @app.route('/employee/<int:id>', methods=['GET'])
+@cross_origin()
 def get_employee(id):
     if request.method == 'GET':
+        # Fetch the employee with the given ID
         employee = db.session.query(Employee).filter_by(id=id).first()
-        return jsonify({
-            "id": employee.id,
-            "first_name": employee.first_name,
-            "last_name": employee.last_name,
-            "phone_no": employee.phone_no,
-            "email": employee.email,
-            "address": employee.address,
-            "designation_id": employee.designation_id
-        })
+        
+        # If no employee is found, return an appropriate message
+        if not employee:
+            return jsonify({"error": "Employee not found"}), 404
+        
+        # Get the number of leaves taken by the employee
+        leave_taken = Leave.query.filter_by(employee_id=employee.id).count()
+        
+        # Construct the employee details
+        emp_details = {
+            'id': employee.id,
+            'first_name': employee.first_name,
+            'last_name': employee.last_name,
+            'phone_no': employee.phone_no,
+            'email': employee.email,
+            'address': employee.address,
+            'designation_id': employee.designation.id,
+            'designation': employee.designation.name,
+            'created_at': employee.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'deleted_at': employee.deleted_at.strftime('%Y-%m-%d %H:%M:%S') if employee.deleted_at else None,
+            'leave_taken': leave_taken,
+            'leave_allotted': employee.designation.leave_allotted
+        }
+        
+        # return jsonify (emp_details)
+        return jsonify({'data': emp_details}), 200
+
 
 
 # post employee
 
 @app.route('/employee/add', methods=['POST'])
 def add_employee():
-        designation_name = request.json.get('designation')
-        designation = Designation.query.filter_by(name=designation_name).first()
         
-        if not designation:
-            return jsonify({'status': 'error'}), 400  # Commit to get the new designation ID
         
 
         employee = Employee(
@@ -135,7 +175,7 @@ def add_employee():
             phone_no=request.json.get('phone_no'),
             email=request.json.get('email'),
             address=request.json.get('address'),
-            designation_id=designation.id
+            designation_id=request.json.get('designation_id'),
         )
         
         db.session.add(employee)
@@ -148,70 +188,66 @@ def add_employee():
             "phone_no": employee.phone_no,
             "email": employee.email,
             "address": employee.address,
-            "designation": designation.name
+            "designation": employee.designation.name
 }
-        return flask.jsonify (new_employee)
+        # return flask.jsonify (new_employee)
+        return jsonify({'data': new_employee}), 201
+
 
 # update employee   
+
+
 @app.route('/employee/update/<int:id>', methods=['PUT'])
 def update_employee(id):
     if request.method == 'PUT':
+        data = request.json
+        print(data)
+        # Fetch the employee
         employee = db.session.query(Employee).filter_by(id=id).first()
-        employee.first_name = request.json.get('first_name')
-        employee.last_name = request.json.get('last_name')
-        employee.phone_no = request.json.get('phone_no')
-        employee.email = request.json.get('email')
-        employee.address = request.json.get('address')
-        employee.designation_id = request.json.get('designation_id')
+        if not employee:
+            return jsonify({'status': 'error', 'message': 'Employee not found'}), 404
+
+        # Update employee fields
+        employee.first_name = data.get('first_name')
+        employee.last_name = data.get('last_name')
+        employee.phone_no = data.get('phone_no')
+        employee.email = data.get('email')
+        employee.address = data.get('address')
+        
+        # Fetch and update designation
+        designation_id = data.get('designation_id')
+        if designation_id:
+            designation = db.session.query(Designation).get(designation_id)
+            if designation:
+                employee.designation_id = designation.id
+            else:
+                return jsonify({'status': 'error', 'message': 'Designation not found'}), 404
+
         db.session.commit()
         return jsonify({'status': 'success'})
-    else:
-        return jsonify({'status': 'error'}), 400  
+
     
 # delete employee
-@app.route('/employee/delete/<int:id>', methods=['DELETE'])
+@app.route('/employee/delete/<int:id>', methods=['POST'])
+@cross_origin()
 def delete_employee(id):
-    if request.method == 'DELETE':
-        employee = db.session.query(Employee).filter_by(id=id).first()
-        db.session.delete(employee)
+    if request.method == 'POST':
+        # data=request.get_json()
+        now=dt.datetime.now(dt.timezone.utc).isoformat()
+        # employeeId=data['id']
+        employee=db.session.query(Employee).filter_by(id=id).first()
+        if not employee:
+            return jsonify({"data":{},
+            "status":False,
+            "message":"Employee not found"}),404
+        employee.deleted_at=now
         db.session.commit()
-        return jsonify({'status': 'success'})
-    else:
-        return jsonify({'status': 'error'}), 400
-
-# get leave
-@app.route('/leave/all', methods=['GET'])
-def get_all_leaves():
-    if request.method == 'GET':
-        leaves = db.session.query(Leave).all()
-        leave_list = []
-        for leave in leaves:
-            leave_data = {
-                'id': leave.id,
-                'employee_id': leave.employee_id,
-                'leave_taken': leave.leave_taken
-            }
-            leave_list.append(leave_data)
-        return jsonify(leave_list)
+        return jsonify({"data":{},
+        "status":True,
+        "message":"Employee deleted successfully"}),200
 
 
-
-# # post leave
-# @app.route('/leave/add', methods=['POST'])  
-# def add_leave():
-#     if request.method == 'POST':
-#         employee_id = request.json.get('employee_id')
-#         leave_taken = request.json.get('leave_taken')
-#         new_leave = Leave(employee_id=employee_id, leave_taken=leave_taken)
-#         db.session.add(new_leave)
-#         db.session.commit()
-#         return jsonify({'status': 'success'})
-#     else:
-#         return jsonify({'status': 'error'}), 400  # Return a 400 Bad Request status code
-
-
-
-
+# post leave
 
 @app.route('/leave/add/<int:emp_id>', methods=['POST'])
 def add_leave(emp_id):
@@ -222,14 +258,14 @@ def add_leave(emp_id):
         
         employee = Employee.query.filter_by(id=employee_id).first()
         if not employee:
-            return jsonify({'status': 'error', 'message': 'Employee not found'})
+            return jsonify({'status': 'error', 'message': 'Employee not found'}),404
 
         leave_allotted = employee.designation.leave_allotted
         print(total_leave_taken, leave_allotted)
 
         # Check if the leave taken exceeds the allotted leave
-        if total_leave_taken > leave_allotted:
-            return jsonify({'status': 'error', 'message': 'No more leave available'})
+        if total_leave_taken >= leave_allotted:
+            return jsonify({'status': 'error', 'message': 'No more leave available'}),200
 
         # Add new leave record
         new_leave = Leave(employee_id=employee_id, leave_taken=total_leave_taken+1)
@@ -237,41 +273,15 @@ def add_leave(emp_id):
         db.session.commit()
 
         return jsonify({'status': 'success', 'message': 'Leave added successfully'})
-    else:
-        return jsonify({'status': 'error', 'message': 'Invalid request method'})
-# get credential
-@app.route('/credentials/all', methods=['GET'])
-def get_credentials():
-    if request.method == 'GET':
-        credentials = db.session.query(Credential).all()
-        credential_list = []
-        for credential in credentials:
-            credential_data = {
-                'id': credential.id,
-                'username': credential.username,
-                'password': credential.password
-            }
-            credential_list.append(credential_data)
-        return jsonify(credential_list) 
-    
-# list credentials
-@app.route('/credentials/add', methods=['POST'])
-def add_credentials():
-    if request.method == 'POST':
-        username = request.json.get('username')
-        password = request.json.get('password')
-        credential = Credential(username=username, password=password)
-        db.session.add(credential)
-        db.session.commit()
-        return jsonify({'status': 'success'})
-    else:
-        return jsonify({'status': 'error'}), 400  
+
+
     
 # logout
 @app.route('/logout', methods=['POST'])
+@cross_origin()
 def logout():
-    db.session.pop('username, None') 
-    return jsonify({'status': 'success'})
+    session.pop('username', None) 
+    return jsonify({'status': 'success'}), 200
 
 with app.app_context():
     db.create_all()
