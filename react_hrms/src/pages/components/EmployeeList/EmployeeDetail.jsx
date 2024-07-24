@@ -56,7 +56,10 @@ const EmployeeDetail = ({ employee }) => {//eslint-disable-line
     leave_taken: "",
     leave_allotted: "",
   });
-
+  useEffect(() => {
+    dispatch(getEmployeeList());
+  }, [dispatch]);
+  
   useEffect(() => {
     dispatch(getDesignationList());
   }, [dispatch]);
@@ -107,6 +110,7 @@ const EmployeeDetail = ({ employee }) => {//eslint-disable-line
       .then(() => {
         dispatch(getEmployeeDetail(id));
         setOpen(false);
+        dispatch(getEmployeeList());
       })
       .catch((error) => {
         console.error("Update failed:", error);
@@ -142,6 +146,7 @@ const EmployeeDetail = ({ employee }) => {//eslint-disable-line
         console.log("Delete successful:", data);
         dispatch(getEmployeeList()); // Refresh employee list
         navigate("/employee/all");
+        window.location.reload(); // Reload the page
       },
       (error) => {
         console.error("Delete failed:", error);
