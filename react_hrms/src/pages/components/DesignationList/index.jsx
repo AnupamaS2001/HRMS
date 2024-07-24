@@ -42,7 +42,7 @@ console.log(position,"positionnnnn");
           <Box sx={{ p: 7 }}>
             <Paper elevation={3} sx={{ marginBottom: 4 }}>
               <Typography variant="h6" gutterBottom sx={{ padding: 2 }} align="center">
-                DESIGNATION
+                DESIGNATION 
               </Typography>
               <TableContainer component={Paper} sx={{ border: 1, borderColor: 'grey.400' }}>
                 <Table>

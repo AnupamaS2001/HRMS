@@ -75,7 +75,8 @@ const Company = () => {
                     gutterBottom
                     sx={{ padding: 2 }}
                   >
-                    Employee List
+                    <h4>Employee List</h4>
+                    <p>No.of employees : {employees.length}</p> 
                   </Typography>
                   <TableContainer>
                     <Table>
@@ -94,6 +95,8 @@ const Company = () => {
                                 key={employee.id}
                                 onClick={() => handleRowClick(employee.id)}
                                 style={{ cursor: "pointer" }}
+                                hover={true}
+                               
                               >
                                 <TableCell align="center">{index + 1}</TableCell>
                                 <TableCell align="center">{`${employee.first_name} ${employee.last_name}`}</TableCell>

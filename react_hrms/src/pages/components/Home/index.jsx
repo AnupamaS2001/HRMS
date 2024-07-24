@@ -13,6 +13,7 @@ const Home = () => {
       backgroundRepeat: 'no-repeat',
       display: 'flex', justifyContent: 'center', alignItems: 'center' 
     }}>
+      
      <Box> 
       <Login />
      </Box>

@@ -1,76 +1,3 @@
-// import { useDispatch, } from "react-redux";
-// import { useNavigate } from "react-router-dom";
-// import { addDesignation } from "../../../store/designation";
-// import { useState } from "react";
-
-
-
-// const DesignationAdd = () => {
-//     const dispatch = useDispatch();
-//     const navigate = useNavigate();
-//     const [errorMessage, setErrorMsg] = useState(null);
-//     const [designation, setDesignation] = useState({
-//       name: '',
-//       leave_allotted: '',
-//     });
-//     const success = () => {
-//       navigate('/designation/all');
-//       setErrorMsg(null);
-//     };
-  
-//     const errorHandle = (error) => {
-//       setErrorMsg(error);
-//     };
-  
-//     const handleSubmit = (e) => {
-//       e.preventDefault();
-//       dispatch(addDesignation({ designationData: designation, successCb: success, errorCb: errorHandle }));
-//     };
-  
-//     const handleInputChange = (event) => {
-//       const { name, value } = event.target;
-//       setDesignation({
-//         ...designation,
-//         [name]: value,
-//       });
-//     };
-  
-//     return (
-//       <div>
-//         <h2>Add Designation</h2>
-//         <form onSubmit={handleSubmit}>
-//           <div>
-//             <label>
-//               Name:
-//               <input
-//                 type="text"
-//                 name="name"
-//                 value={designation.name}
-//                 onChange={handleInputChange}
-//               />
-//             </label>
-//           </div>
-//           <div>
-//             <label>
-//               Leave Allotted:
-//               <input
-//                 type="text"
-//                 name="leave_allotted"
-//                 value={designation.leave_allotted}
-//                 onChange={handleInputChange}
-//               />
-//             </label>    
-//           </div>                
-//           <button type="submit">Submit</button>
-//         </form>
-//         {errorMessage && <p>{errorMessage}</p>}     
-//       </div>
-//     );  
-//   };        
-//   export default DesignationAdd;
-
-//=================================================================================================================
-
 
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -111,6 +38,7 @@ const DesignationAdd = () => {
   };
 
   const handleClose = () => setModalOpen(false);
+  navigate('/designation/all');
 
 
   return (
@@ -158,6 +86,7 @@ const DesignationAdd = () => {
             <Button type="submit" variant="contained" sx={{ mt: 2 }} onClick={handleSubmit}>
               Add
             </Button>
+            <Button sx={{ mt: 2 }} onClick={handleClose}>Cancel</Button>
           </FormControl>
           {errorMessage && <Typography color="error">{errorMessage}</Typography>}
         </Box>
