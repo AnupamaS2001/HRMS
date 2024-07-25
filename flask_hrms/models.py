@@ -12,7 +12,7 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 
-
+db_uri='postgresql://anu:1234@localhost:5432/flaskdb'
 
 
 class Credential(db.Model):
@@ -52,7 +52,7 @@ class Leave(db.Model):
     leave_taken: Mapped[int] = mapped_column(nullable=False)
     employee: Mapped['Employee'] = relationship('Employee', backref='leave', lazy=True)
 
-def init_db(db_uri='postgresql://anu:1234@localhost:5432/flaskdb'):
+def init_db(db_uri):
     logger = logging.getLogger("FlaskApp")
     engine = create_engine(db_uri)
     Base.metadata.create_all(engine)

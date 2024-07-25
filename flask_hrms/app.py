@@ -9,7 +9,7 @@ from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://anu:1234@localhost:5432/flaskdb"
+app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
 
 db.init_app(app)
 CORS(app)
