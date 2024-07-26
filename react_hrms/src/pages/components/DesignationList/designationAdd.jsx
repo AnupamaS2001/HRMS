@@ -16,8 +16,9 @@ const DesignationAdd = () => {
   const [modalOpen, setModalOpen] = useState(true);
 
   const success = () => {
-    navigate('/designation/all');
+    // navigate('/designation/all');
     setErrorMsg(null);
+    handleClose();
   };
 
   const errorHandle = (error) => {
@@ -35,10 +36,14 @@ const DesignationAdd = () => {
       ...designation,
       [name]: value,
     });
+    console.log('input');
   };
 
-  const handleClose = () => setModalOpen(false);
+  const handleClose = () =>{
+    setModalOpen(false);
   navigate('/designation/all');
+  } 
+
 
 
   return (
